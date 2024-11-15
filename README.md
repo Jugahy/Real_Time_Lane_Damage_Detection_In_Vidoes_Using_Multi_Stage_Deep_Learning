@@ -45,20 +45,45 @@ WE-Meet을 통해 Dareesoft에서 연구 인턴으로 함께했습니다. Darees
 
 
 ## 3️⃣ Process
-### 1-1. Data Introduction
+### 3-1. Data Introduction
 Dareesoft로 부터 받은 고속도로, 일반도로에서 차량 주행 영상 729GB 데이터를 Nas에 받았습니다.<br/>
 아래는 예시 데이터입니다.
 
 ![original](https://github.com/user-attachments/assets/8ba9cf4d-5fb6-44b7-94b5-9471c3c427c9)
 
-  
-### 1-2. How to Use YOLOv8 (Custom Data)
+
+### 3-2. What is the YOLOv8
+➀ YOLOv8 Architecture
+* YOLOv8은 YOLOv5와 유사한 Backbone을 사용하며, CSPLayer에 몇 가지 변경 사항이 적용되어 이제 C2f 모듈로 불립니다. C2f 모듈(두 개의 컨볼루션이 있는 크로스 스테이지 부분 병목)은 고수준 특징을 문맥 정보와 결합하여 탐지 정확도를 향상시킵니다.
+* YOLOv8은 앵커 프리 모델을 사용하며, 객체성, 분류, 회귀 작업을 독립적으로 처리하기 위해 분리된 헤드를 갖추고 있습니다. 이 디자인은 각 브랜치(branch)가 자신의 작업에 집중할 수 있도록 하며 모델의 전반적인 정확도를 향상시킵니다. YOLOv8의 출력 층에서는 객체성 점수를 위한 활성화 함수로 시그모이드 함수를 사용하여 바운딩 박스가 객체를 포함할 확률을 나타냅니다. 클래스 확률을 위해 소프트맥스 함수를 사용하여 객체가 가능한 각 클래스에 속할 확률을 나타냅니다.
+* YOLOv8은 CIoU [76]와 DFL [114] 손실 함수를 사용하여 바운딩 박스 손실과 분류 손실을 위한 이진 교차 엔트로피를 계산합니다. 이러한 손실 함수들은 특히 작은 객체를 처리할 때 객체 탐지 성능을 향상시켰습니다.
+* YOLOv8은 또한 YOLOv8-Seg 모델이라고 불리는 의미 분할 모델을 제공합니다. 백본은 CSPDarknet53 특징 추출기이며, 전통적인 YOLO 넥 아키텍처 대신 C2f 모듈이 뒤따릅니다. C2f 모듈 뒤에는 두 개의 분할 헤드가 있으며, 이는 입력 이미지에 대한 의미 분할 마스크를 예측하는 방법을 학습합니다. 이 모델은 YOLOv8과 유사한 탐지 헤드를 가지고 있으며, 다섯 개의 탐지 모듈과 예측 층으로 구성됩니다. YOLOv8-Seg 모델은 다양한 객체 탐지 및 의미 분할 벤치마크에서 최첨단 결과를 달성하면서도 높은 속도와 효율성을 유지합니다.
+![image](https://github.com/user-attachments/assets/15762f28-5c78-4dc3-8604-7090c47632a5)
+
+
+### 3-3. How to Use YOLOv8 (Custom Data)
 ➀ Custom Data로 YOLOv88 모델을 학습하는 경우에는 Image / Annotation 으로 이루어진 Data를 준비해야 합니다.
   * Custom Data는 [Roboflow](https://public.roboflow.com/)에서 제공하는 Custom Data를 이용할 수 있고, 또는 직접 구축할 수 있습니다.
   * Custom Data 구축 시 이미지 데이터와 정답 데이터는 확장자를 제외한 파일 이름은 동일해야 합니다.
   * YOLOv8에서 Annotation 파일의 확장자는 반드시 .txt 여야 합니다.
 
+<br/>
 
+➁ YOLOv8으로 Custom Data를 학습하기 위해서는 YAML 파일이 필요합니다. (YAML은 아래의 두 가지를 반드시 포함해야 합니다.)
+   * 이미지와 정답이 저장되어 있는 디렉토리 정보
+   * Detection 하고 싶은 클래스 종류와 대응되는 각각의 이름
+```YAML
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 7
+names: ['fish', 'jellyfish', 'penguin', 'puffin', 'shark', 'starfish', 'stingray']
+```
+
+<br/>
+
+➂ 위의 ➀, ➁를 통해 만든 데이터를 사전 학습된 yolov8n.pt에 Fine Tuning 하기 위한 코드 입니다.
 ```python
 # pip install ultralytics
 
@@ -69,3 +94,5 @@ model.train(data='mydata.yaml', epoch=10)
 
 results = model.predict(source='/content/test/')
 ```
+
+
