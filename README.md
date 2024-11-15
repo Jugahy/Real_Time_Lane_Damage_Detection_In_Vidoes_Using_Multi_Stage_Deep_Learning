@@ -39,10 +39,14 @@ WE-Meet을 통해 Dareesoft에서 연구 인턴으로 함께했습니다. Darees
 |Jeong GangHyeon<br/>[@JUGAHY](https://github.com/JUGAHY)|Jang DaeHyeon<br/>[@JangDaeHyeon](https://github.com/JangDaeHyeon)|
 
 ### Jeong GangHyeon
-* 
+* Model for lane damage evaluation(vgg16, Resnet-18, Mobilenet V3 Large, Mobilenet V3 Small)
+* Data Collection and Preprocessing
+* Data Labeling
   
 ### Jang DaeHyeon
-* 
+* Implementing YOLOv8 Code Using Custom Data
+* OpenCV : Image Processing
+* Data Labeling
 
 
 ## 3️⃣ YOLOv8
