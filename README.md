@@ -207,4 +207,6 @@ Real-Time Lane Damage Detection In Vidoes Using Multi-Stage Deep Learning
 
 
 ## 6️⃣ References
-* 
+* https://docs.ultralytics.com/ko/models/yolov8/
+* https://dongle94.github.io/paper/yolov5-8/
+* https://www.youtube.com/watch?v=em_lOAp8DJE
