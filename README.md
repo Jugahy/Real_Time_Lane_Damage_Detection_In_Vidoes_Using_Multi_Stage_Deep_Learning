@@ -210,3 +210,12 @@ Real-Time Lane Damage Detection In Vidoes Using Multi-Stage Deep Learning
 * https://docs.ultralytics.com/ko/models/yolov8/
 * https://dongle94.github.io/paper/yolov5-8/
 * https://www.youtube.com/watch?v=em_lOAp8DJE
+* https://pytorch.org/vision/main/models/generated/torchvision.models.vgg16.html
+* https://pytorch.org/vision/main/models/mobilenetv3.html
+* https://keras.io/2.15/api/applications/mobilenet/
+* https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py
+* https://pytorch.org/vision/main/models/generated/torchvision.models.resnet18.html
+* https://bkshin.tistory.com/entry/OpenCV-8-%EC%8A%A4%EB%A0%88%EC%8B%9C%ED%99%80%EB%94%A9Thresholding
+* https://velog.io/@mykirk98/SOBEL-FILTER
+* https://95mkr.tistory.com/entry/OPENCV5
+* https://velog.io/@mykirk98/Canny-Edge-Detection
