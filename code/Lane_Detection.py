@@ -32,7 +32,7 @@ if __name__ == "__main__":
     names = model.names  # 클래스 이름
 
     # 분류 모델 로드
-    model_classification = torch.load('./default_path/resnet18.pth', map_location=torch.device('cpu'))  # 기본 분류 모델 경로
+    model_classification = torch.load('./default_path/mobilenet_v3_large.pth', map_location=torch.device('cpu'))  # 기본 분류 모델 경로
     classes = ['A', 'B', 'C', 'F']  # 클래스 레이블
     classes_pen = {'A': (0, 255, 0), 'B': (255, 0, 0), 'C': (0, 255, 255), 'F': (0, 0, 255)}  # 색상
     model_classification.eval()  # 분류 모델 평가 모드 설정
