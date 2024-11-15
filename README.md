@@ -10,7 +10,7 @@ Using the YOLOv8 model, we developed a system that detects lanes in real time fr
 3. [YOLOv8](#3️⃣-yolov8)
 4. [Process](#4️⃣-process)
 5. [Structure](#5️⃣-structure)
-6. [References](#5️⃣-references)
+6. [References](#6️⃣-references)
    
 
 ## 1️⃣ Overview
@@ -52,6 +52,7 @@ WE-Meet을 통해 Dareesoft에서 연구 인턴으로 함께했습니다. Darees
 * YOLOv8은 앵커 프리 모델을 사용하며, 객체성, 분류, 회귀 작업을 독립적으로 처리하기 위해 분리된 헤드를 갖추고 있습니다. 이 디자인은 각 브랜치(branch)가 자신의 작업에 집중할 수 있도록 하며 모델의 전반적인 정확도를 향상시킵니다. YOLOv8의 출력 층에서는 객체성 점수를 위한 활성화 함수로 시그모이드 함수를 사용하여 바운딩 박스가 객체를 포함할 확률을 나타냅니다. 클래스 확률을 위해 소프트맥스 함수를 사용하여 객체가 가능한 각 클래스에 속할 확률을 나타냅니다.
 * YOLOv8은 CIoU [76]와 DFL [114] 손실 함수를 사용하여 바운딩 박스 손실과 분류 손실을 위한 이진 교차 엔트로피를 계산합니다. 이러한 손실 함수들은 특히 작은 객체를 처리할 때 객체 탐지 성능을 향상시켰습니다.
 * YOLOv8은 또한 YOLOv8-Seg 모델이라고 불리는 의미 분할 모델을 제공합니다. 백본은 CSPDarknet53 특징 추출기이며, 전통적인 YOLO 넥 아키텍처 대신 C2f 모듈이 뒤따릅니다. C2f 모듈 뒤에는 두 개의 분할 헤드가 있으며, 이는 입력 이미지에 대한 의미 분할 마스크를 예측하는 방법을 학습합니다. 이 모델은 YOLOv8과 유사한 탐지 헤드를 가지고 있으며, 다섯 개의 탐지 모듈과 예측 층으로 구성됩니다. YOLOv8-Seg 모델은 다양한 객체 탐지 및 의미 분할 벤치마크에서 최첨단 결과를 달성하면서도 높은 속도와 효율성을 유지합니다.
+  
 ![image](https://github.com/user-attachments/assets/15762f28-5c78-4dc3-8604-7090c47632a5)
 
 
@@ -99,21 +100,40 @@ Dareesoft로 부터 받은 고속도로, 일반도로에서 차량 주행 영상
 
 ![original](https://github.com/user-attachments/assets/8ba9cf4d-5fb6-44b7-94b5-9471c3c427c9)
 
+<br/>
 
 ### 4-2. Obtain Data From Video
 위의 코드에 YOLOv8 객체 탐지 및 분할(segmentation) 모델을 활용하여 Video에서 Lane 부분만 추출하였습니다.
 
 ![lane2](https://github.com/user-attachments/assets/0f595341-86a1-4159-8d74-b991773097f6)
 
-➀ 원본 영상에서 차선 부분 Bounding Box
+➀ 원본 영상에서 차선 부분 Box
+
 ![image](https://github.com/user-attachments/assets/b7f820f2-693e-4b78-924e-ec3a245ac949)
 
 ➁ Segmentation Mask만 추출한 이미지
+
 ![image](https://github.com/user-attachments/assets/64247cc8-2a6c-4f6e-9fd8-1e56f7bf1a7f)
 
+-> 이 데이터에는 차선 부분을 정확히 segmentation 하지 못하고 주변 도로도 포함하는 문제가 있습니다. <br/>
+   (아래 절대감속을 예시로 설명드리겠습니다.)
+
+차선 훼손도를 평가하는 모델에 차선 데이터를 학습할 때 차선이 아닌 다른 부분이 함께 있으면 학습에 안 좋은 영향을 줄 것이기 때문에 아래와 같은 전처리 방법을 참고하여 도로 부분은 제거하고 차선만 남을 수 있게 하였습니다.
+* Otsu, Sobel, HSV, Canny, K-Means(각 픽셀의 0~255값의 분포를 통해 군집을 생성해 255에서 먼 군집을 0으로 변환)
+
+<p>
+  <img src="https://github.com/user-attachments/assets/517f1da7-8599-4b10-9a23-5d3a070c0ef3" width="640" height="320" alt="Image 1">
+</p>
+
+<p>
+  <img src="https://github.com/user-attachments/assets/a6c78a79-7d5c-41c9-8a02-eca1708630b5" width="320" height="320" alt="Image 1">
+  <img src="https://github.com/user-attachments/assets/2cd94c6b-508e-4202-bd9f-2fc5e562d6b9" width="320" height="320" alt="Image 2">
+</p>
+
+<br/>
 
 ### 4-3. Labeling For Lane Damage Evaluation
-차선 훼손도에 따른 Labeling 된 데이터가 없기 때문에 아래와 같은 기준을 세워 A, B, C, F로 직접 Labeling 했습니다.
+차선 훼손도에 따른 Labeling 된 데이터가 없기 때문에 아래와 같은 기준을 세워 A, B, C, F로 직접 Labeling 해주었습니다.
 
 <table>
   <tr>
@@ -141,5 +161,50 @@ Dareesoft로 부터 받은 고속도로, 일반도로에서 차량 주행 영상
 * C : 면의 형태로 균열이 존재하는가?
 * F : 균열이 정상적인 부분보다 더 넓은가?
 
+<br/>
 
 ### 4-4. Model For Lane Damage Evaluation
+여러 Classification 모델을 학습하여 최적의 성능과 실시간 처리를 위한 빠른 분류가 가능한 모델을 찾았습니다.
+아래의 모델을 Labeling한 데이터를 학습하여 성능을 평가해보았습니다.
+
+* VGG-16
+* Resnet-18
+* Mobilenet V3 Large
+* Mobilenet V3 Small
+
+![image](https://github.com/user-attachments/assets/e21f0040-9030-4a63-bc91-ab7472e3b77a)
+
+-> 다른 모델에 비해 Parameter 수가 적고 2번째로 높은 성능을 내는 **Mobilenet V3 Large Model**을 선택하였습니다.
+
+<br/>
+
+### 4-5. Result : Lane Segmentation & Classification in Real-Time Video
+
+![lane 1](https://github.com/user-attachments/assets/b8252b5e-e8f9-4f0d-b8bc-30c2ddb1e0fe)
+
+
+
+## 5️⃣ Structure
+```
+Real-Time Lane Damage Detection In Vidoes Using Multi-Stage Deep Learning
+
+├── LICENSE
+├── README.md
+├── code
+│   ├── Classification
+│   │   ├── Nets_MobileNet_v3_small.ipynb
+│   │   ├── mobilenet_v3_large.ipynb  
+│   │   ├── resnet18.ipynb
+│   │   ├── wide_resnet50_2.ipynb  
+│   │   └── Nets_VGG16.ipynb
+│   │   
+│   ├── Lane_Classification.py
+│   ├── Lane_Data_Preprocessing.ipynb
+│   └── Lane_Detection.py
+
+```
+
+
+
+## 6️⃣ References
+* 
