@@ -7,9 +7,10 @@ Using the YOLOv8 model, we developed a system that detects lanes in real time fr
 
 1. [Overview](#1️⃣-overview)
 2. [Role](#2️⃣-role)
-3. [Process](#3️⃣-process)
-4. [Structure](#4️⃣-structure)
-5. [References](#5️⃣-references)
+3. [YOLOv8](#3️⃣-yolov8)
+4. [Process](#4️⃣-process)
+5. [Structure](#5️⃣-structure)
+6. [References](#5️⃣-references)
    
 
 ## 1️⃣ Overview
@@ -44,15 +45,8 @@ WE-Meet을 통해 Dareesoft에서 연구 인턴으로 함께했습니다. Darees
 * 
 
 
-## 3️⃣ Process
-### 3-1. Data Introduction
-Dareesoft로 부터 받은 고속도로, 일반도로에서 차량 주행 영상 729GB 데이터를 Nas에 받았습니다.<br/>
-아래는 예시 데이터입니다.
-
-![original](https://github.com/user-attachments/assets/8ba9cf4d-5fb6-44b7-94b5-9471c3c427c9)
-
-
-### 3-2. What is the YOLOv8
+## 3️⃣ YOLOv8
+### 3-1. What is the YOLOv8
 ➀ YOLOv8 Architecture
 * YOLOv8은 YOLOv5와 유사한 Backbone을 사용하며, CSPLayer에 몇 가지 변경 사항이 적용되어 이제 C2f 모듈로 불립니다. C2f 모듈(두 개의 컨볼루션이 있는 크로스 스테이지 부분 병목)은 고수준 특징을 문맥 정보와 결합하여 탐지 정확도를 향상시킵니다.
 * YOLOv8은 앵커 프리 모델을 사용하며, 객체성, 분류, 회귀 작업을 독립적으로 처리하기 위해 분리된 헤드를 갖추고 있습니다. 이 디자인은 각 브랜치(branch)가 자신의 작업에 집중할 수 있도록 하며 모델의 전반적인 정확도를 향상시킵니다. YOLOv8의 출력 층에서는 객체성 점수를 위한 활성화 함수로 시그모이드 함수를 사용하여 바운딩 박스가 객체를 포함할 확률을 나타냅니다. 클래스 확률을 위해 소프트맥스 함수를 사용하여 객체가 가능한 각 클래스에 속할 확률을 나타냅니다.
@@ -61,7 +55,7 @@ Dareesoft로 부터 받은 고속도로, 일반도로에서 차량 주행 영상
 ![image](https://github.com/user-attachments/assets/15762f28-5c78-4dc3-8604-7090c47632a5)
 
 
-### 3-3. How to Use YOLOv8 (Custom Data)
+### 3-2. How to Use YOLOv8 (Custom Data)
 ➀ Custom Data로 YOLOv88 모델을 학습하는 경우에는 Image / Annotation 으로 이루어진 Data를 준비해야 합니다.
   * Custom Data는 [Roboflow](https://public.roboflow.com/)에서 제공하는 Custom Data를 이용할 수 있고, 또는 직접 구축할 수 있습니다.
   * Custom Data 구축 시 이미지 데이터와 정답 데이터는 확장자를 제외한 파일 이름은 동일해야 합니다.
@@ -95,4 +89,57 @@ model.train(data='mydata.yaml', epoch=10)
 results = model.predict(source='/content/test/')
 ```
 
+<br/>
 
+
+## 4️⃣ Process
+### 4-1. Data Introduction
+Dareesoft로 부터 받은 고속도로, 일반도로에서 차량 주행 영상 729GB 데이터를 Nas에 받았습니다.<br/>
+아래는 예시 데이터입니다.
+
+![original](https://github.com/user-attachments/assets/8ba9cf4d-5fb6-44b7-94b5-9471c3c427c9)
+
+
+### 4-2. Obtain Data From Video
+위의 코드에 YOLOv8 객체 탐지 및 분할(segmentation) 모델을 활용하여 Video에서 Lane 부분만 추출하였습니다.
+
+![lane2](https://github.com/user-attachments/assets/0f595341-86a1-4159-8d74-b991773097f6)
+
+➀ 원본 영상에서 차선 부분 Bounding Box
+![image](https://github.com/user-attachments/assets/b7f820f2-693e-4b78-924e-ec3a245ac949)
+
+➁ Segmentation Mask만 추출한 이미지
+![image](https://github.com/user-attachments/assets/64247cc8-2a6c-4f6e-9fd8-1e56f7bf1a7f)
+
+
+### 4-3. Labeling For Lane Damage Evaluation
+차선 훼손도에 따른 Labeling 된 데이터가 없기 때문에 아래와 같은 기준을 세워 A, B, C, F로 직접 Labeling 했습니다.
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/01ddd520-7d1b-499f-baf8-8538ab9a6d16" width="100" height="100" alt="A"><br>
+      <span>A</span>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/fd3fd06a-ec3e-4e19-ac18-1711a3959e80" width="100" height="100" alt="B"><br>
+      <span>B</span>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/695d3874-0141-4513-9c53-79f91c74afe5" width="100" height="100" alt="C"><br>
+      <span>C</span>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/a1662d49-bad1-4517-9c39-612b63c3c19b" width="100" height="100" alt="F"><br>
+      <span>F</span>
+    </td>
+  </tr>
+</table>
+
+* A : 균열 없이 완벽하게 횐색을 유지하고 있는가?
+* B : 선의 형태로 균열이 존재하는가?
+* C : 면의 형태로 균열이 존재하는가?
+* F : 균열이 정상적인 부분보다 더 넓은가?
+
+
+### 4-4. Model For Lane Damage Evaluation
