@@ -178,7 +178,7 @@ Dareesoft로 부터 받은 고속도로, 일반도로에서 차량 주행 영상
 
 ![image](https://github.com/user-attachments/assets/e21f0040-9030-4a63-bc91-ab7472e3b77a)
 
--> 다른 모델에 비해 Parameter 수가 적고 2번째로 높은 성능을 내는 **Mobilenet V3 Large Model**을 선택하였습니다.
+-> 다른 모델에 비해 학습이 안정적이고 2번째로 높은 성능을 내는 **ResNet**을 선택하였습니다.
 
 <br/>
 
