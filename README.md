@@ -61,7 +61,7 @@ WE-Meet을 통해 Dareesoft에서 연구 인턴으로 함께했습니다. Darees
 
 
 ### 3-2. How to Use YOLOv8 (Custom Data)
-➀ Custom Data로 YOLOv88 모델을 학습하는 경우에는 Image / Annotation 으로 이루어진 Data를 준비해야 합니다.
+➀ Custom Data로 YOLOv8 모델을 학습하는 경우에는 Image / Annotation 으로 이루어진 Data를 준비해야 합니다.
   * Custom Data는 [Roboflow](https://public.roboflow.com/)에서 제공하는 Custom Data를 이용할 수 있고, 또는 직접 구축할 수 있습니다.
   * Custom Data 구축 시 이미지 데이터와 정답 데이터는 확장자를 제외한 파일 이름은 동일해야 합니다.
   * YOLOv8에서 Annotation 파일의 확장자는 반드시 .txt 여야 합니다.
